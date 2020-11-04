@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+
+template <typename T> void setmax(T& a, T b) { if (b > a) a = b; }
+
+int main() {
+	using namespace std;
+	ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+	using i64 = int64_t;
+
+	int N; cin >> N;
+	vector<i64> A(N);
+	for (int i = 0; i < N; i++) {
+		cin >> A[i];
+	}
+	if (N == 1) {
+		cout << A[0] << '\n';
+		exit(0);
+	}
+
+	const i64 INF = 1e18;
+	array<i64, 3> dp_alternating{0,-INF,-INF};
+	array<i64, 3> dp{-INF,-INF,-INF};
+	for (int i = 0; i < N; i++) {
+		array<i64, 3> ndp_alternating{-INF,-INF,-INF};
+		array<i64, 3> ndp{-INF,-INF,-INF};
+		for (int a = 0; a < 3; a++) {
+			for (int z : {1, -1}) {
+				setmax(ndp[(a + 3 + z) % 3], dp[a] + z * A[i]);
+				setmax((z == (i % 2 ? -1 : 1) ? ndp_alternating : ndp)[(a + 3 + z) % 3], dp_alternating[a] + z * A[i]);
+			}
+		}
+		dp = ndp;
+		dp_alternating = ndp_alternating;
+	}
+
+	cout << dp[1] << '\n';
+
+	return 0;
+}
+
+// An array is valid if you can take 2 adjacent equal and replace with 1 opposite, and it converges to 1
+// [+ - + - +]
+// [+ + - - +] -> [- - - +] -> [- + +] -> [- -] -> [+]
+
