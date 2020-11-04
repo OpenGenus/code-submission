@@ -2,6 +2,7 @@ import requests
 from lxml import html
 from time import sleep # to reduce the number of requests per second
 import json
+import sys
 
 # see start and end pages and specify in range
 
@@ -49,12 +50,27 @@ def returnAcceptedSubmissions(Username, number_of_pages):
                 
                 code = tree2.xpath(address)
 
-                lines = code[0].split("\r\n")
+                lines = [code[0]]
 
                 #saving the code in a outfile
-                save_data(lines, res[i][4])
+                print_data(str(lines[0]), res[i][4])
+                #for i in lines:
+                #print(str(lines[0]))
                 sleep(5)
             
+def uprint(*objects,file, sep=' ', end='\n'):
+    enc = file.encoding
+    if enc == 'UTF-8':
+        print(*objects, sep=sep, end=end, file=file)
+    else:
+        f = lambda obj: str(obj).encode(enc, errors='backslashreplace').decode(enc)
+        print(*map(f, objects), sep=sep, end=end, file=file)
+
+def print_data(sub_data, file_name):
+    open_file = open(file_name, 'w')
+    #for line in sub_data:
+    uprint(sub_data, file = open_file)
+    open_file.close()
 
 
 def save_data(sub_data, file_name):
@@ -64,8 +80,8 @@ def save_data(sub_data, file_name):
 
 
 
-Username = input("Enter the username: ") #Username
-Number_of_pages = int(input("Enter the number of pages: ")) #specify the total number of pages to inspect. Should be less than or equal to the total number.
+#Username = input("Enter the username: ") #Username
+#Number_of_pages = int(input("Enter the number of pages: ")) #specify the total number of pages to inspect. Should be less than or equal to the total number.
 
 #running the program
-returnAcceptedSubmissions(Username,Number_of_pages)
+#returnAcceptedSubmissions(Username,Number_of_pages)
